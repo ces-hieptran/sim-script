@@ -19,4 +19,4 @@ Step:
 + cd to simgorg or worktree of Simorg
 + run: 
    + sim setup --> sim run;
-# Just need to run sim setup 1 time   
+### Just need to run sim setup 1 time   
