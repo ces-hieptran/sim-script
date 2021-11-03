@@ -1,0 +1,99 @@
+#!/bin/sh
+# Purpose: rebuild service and run service again when edit *.properties files
+# Author: HiepTran
+
+# todo: export workspace folder
+
+current=$(dirname $0)
+workDir=$current/work-dir
+
+sim_get(){
+	if [ $(cat $workDir) ]
+    		then 
+    			cat $workDir
+    		else 
+    			echo    Please set Project or Worktree in SIM Workspace 
+  			echo    - $SIM_WORKSPACE -
+    		fi
+}
+
+sim_set(){
+
+	if echo $(pwd) | grep -q $SIM_WORKSPACE;
+         	then
+  			echo $(pwd) > $workDir
+			echo $(pwd)
+			return 0;
+  		else
+  			echo    Please just set Project or Worktree in SIM Workspace 
+  			echo    - $SIM_WORKSPACE -
+  			return 1;
+		fi
+}
+
+sim_key(){
+
+	if [ $(cat $workDir) ]
+		then
+			license=license.xml
+			cp $current/$license $(sim get)/liferay/build/docker/deploy/$license
+			return 0;
+		else
+		        echo "Please set Project or Worktree directory"
+		        echo    - $SIM_WORKSPACE -
+		        return 1;
+		fi
+}
+
+sim_file(){
+	if [ $(cat $workDir) ]
+		then
+		  	path=$(sim-get)
+		  	composeFile=docker-compose.yml
+		  
+		  	cp $current/$composeFile $(sim get)/$composeFile
+		  	return 0;
+		else
+		  	echo "Please set Project or Worktree directory"
+			echo    - $SIM_WORKSPACE -
+			return 1;
+		fi
+}
+
+
+if [ -z $1 ]
+then
+    echo 'set		Set Project or Worktree folder'
+    echo 'get		Get current Project or Worktree folder working on'
+    echo 'key		Copy license.xml file to docker deploy folder'
+    echo 'file		Update docker-compose file to Debug and Deploy'
+    echo 'setup        Setup all think need for Development'
+    echo 'run      	Compile bundles of step'
+    
+elif [ -n $1 ]
+then
+    
+
+    case $1 in
+    	'get'| 1 )
+    		sim_get;;
+    	'set'| 2) 	
+    		sim_set;;
+    	'key'| 3)
+		sim_key;;	
+    	'file'| 4)		
+		sim_file;;
+    	'setup' | 5)
+    		cd $(sim_get)
+    		currentWorkSpace=$(pwd)
+    		echo $currentWorkSpace/liferay/gradlew
+    		sim_set && sim_file && sim_key && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
+    		cd $(sim_get)
+    		;;
+    	'run' | 6)
+    		 (docker-compose start || docker-compose up -d) && docker-compose logs -f liferay;;
+    	*)
+    		cecho red 'This-is-not-a-options.Please-try-again!'
+    esac
+
+fi
