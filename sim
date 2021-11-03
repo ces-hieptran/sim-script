@@ -67,8 +67,8 @@ then
     echo 'get		Get current Project or Worktree folder working on'
     echo 'key		Copy license.xml file to docker deploy folder'
     echo 'file		Update docker-compose file to Debug and Deploy'
-    echo 'setup        Setup all think need for Development'
-    echo 'run      	Compile bundles of step'
+    echo 'setup           Setup all think need for Development'
+    echo 'run      	Run all container in docker-compose'
     
 elif [ -n $1 ]
 then
