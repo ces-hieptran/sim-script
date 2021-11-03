@@ -9,3 +9,4 @@ Clone to local and export 2 vairable:
 + export PATH=$PATH:$( path_to_sim_script_folder )
 
 This better when work with git worktree
++ git worktree add ../{name} {brand-name}
