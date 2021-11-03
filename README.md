@@ -10,3 +10,5 @@ Clone to local and export 2 vairable:
 
 This better when work with git worktree
 + git worktree add ../{name} {brand-name}
++ You can use gradlew dockerDeploy to direct deploy
++ You can debug in port 8000
