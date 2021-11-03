@@ -48,10 +48,10 @@ sim_key(){
 sim_file(){
 	if [ $(cat $workDir) ]
 		then
-		  	path=$(sim-get)
+		  	path=$(sim_get)
 		  	composeFile=docker-compose.yml
 		  
-		  	cp $current/$composeFile $(sim get)/$composeFile
+		  	cp $current/$composeFile $(sim_get)/$composeFile
 		  	return 0;
 		else
 		  	echo "Please set Project or Worktree directory"
