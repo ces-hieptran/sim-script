@@ -93,11 +93,9 @@ then
 		sim_file;;
 	'clean'| 5)	
 		sim_clean;;
-    	'setup' | 6)
-    		cd $(sim_get)
+    	'setup' | 6)	
     		currentWorkSpace=$(pwd)
-    		echo $currentWorkSpace/liferay/gradlew
-    		sim_set && sim_file && sim_key && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
+    		sim_set && cd $(sim_get) && sim_file && sim_key && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
     		cd $(sim_get)
     		;;
     	'run' | 7)
