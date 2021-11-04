@@ -5,7 +5,7 @@
 # todo: export workspace folder
 
 current=$(dirname $0)
-workDir=$current/work-dir
+workDir=$current/work-dir.txt
 
 sim_get(){
 	if [ $(cat $workDir) ]
