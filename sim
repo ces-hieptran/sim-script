@@ -12,7 +12,7 @@ sim_get(){
     		then 
     			cat $workDir
     		else 
-    			echo    Please set Project or Worktree in SIM Workspace 
+    			echo    Please set Project or Worktree in SIM Workspace
   			echo    - $SIM_WORKSPACE -
     		fi
 }
@@ -25,7 +25,8 @@ sim_set(){
 			echo $(pwd)
 			return 0;
   		else
-  			echo    Please just set Project or Worktree in SIM Workspace 
+  			echo    Wrong folder!
+    			echo    Please set Project or Worktree in SIM Workspace
   			echo    - $SIM_WORKSPACE -
   			return 1;
 		fi
@@ -60,6 +61,12 @@ sim_file(){
 		fi
 }
 
+sim_clean(){
+	cd $(sim_get)
+	git restore docker-compose.yml
+	return 0;
+}
+
 
 if [ -z $1 ]
 then
@@ -69,6 +76,7 @@ then
     echo 'file		Update docker-compose file to Debug and Deploy'
     echo 'setup           Setup all think need for Development'
     echo 'run      	Run all container in docker-compose'
+    echo 'clean           Clean docker-compose file'
     
 elif [ -n $1 ]
 then
@@ -83,17 +91,18 @@ then
 		sim_key;;	
     	'file'| 4)		
 		sim_file;;
-    	'setup' | 5)
+	'clean'| 5)	
+		sim_clean;;
+    	'setup' | 6)
     		cd $(sim_get)
     		currentWorkSpace=$(pwd)
     		echo $currentWorkSpace/liferay/gradlew
     		sim_set && sim_file && sim_key && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
     		cd $(sim_get)
     		;;
-    	'run' | 6)
+    	'run' | 7)
     		 (docker-compose start || docker-compose up -d) && docker-compose logs -f liferay;;
     	*)
-    		cecho red 'This-is-not-a-options.Please-try-again!'
+    		echo This is not a options. Please try again.
     esac
-
 fi
