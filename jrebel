@@ -1,0 +1,40 @@
+#!/bin/sh
+# Purpose: Run listener key server
+# Author: HiepTran
+
+if [ -z $1 ]
+then
+	echo '  run		Run Jrebel server container'
+	echo '  get		Get activation keys and copy to clipboard'
+	echo '  stop		Stop Jrevel server container'
+	echo '  rm		Remove Jrebel server container'
+elif [ -n $1 ]
+then
+	case $1 in
+	    	'run'| 1 )
+	    		if [ -z $(docker container ps -a --format "{{.Names}}" | grep jrebel-server) ]
+	    		then 
+	    			docker run --name jrebel-server -p=9000:8081 -d vanhiep99w/jrebel-server && echo "JRebel server run successfully"
+			elif [ -z $(docker container ps --format "{{.Names}}" | grep jrebel-server) ]
+			then
+				docker start jrebel-server && echo "JRebel server run successfully"
+			else
+				curl -s http://localhost:9000 | xclip -sel clip
+	    			echo 'Copied to Clipboard'
+	    		fi
+	    		;;
+	    	'get'| 2)
+	    		curl -s http://localhost:9000 | xclip -sel clip
+	    		echo 'Copied to Clipboard'
+	    		;;
+	    	'stop'| 3)
+	    		docker stop jrebel-server
+	    		;;
+	    	'rm'| 4)
+	    		docker stop jrebel-server
+	    		docker rm jrebel-server
+	    		;;
+	    	*)
+	    		cecho red 'This-is-not-a-options.Please-try-again!'
+	esac
+fi

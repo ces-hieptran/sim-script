@@ -1,0 +1,5 @@
+- With docker 
+	+ Cần phải doaload jrebel jar (trong git doc)
+	+ copy jrebel.jar và libjrebel.so vào trong container
+	+ export JAVA_OPTS="-agentpath:/libjrebel64.so -Drebel.remoting_plugin=true -Drebel.log.file=/jrebel.log"
+	+ Link : https://manuals.jrebel.com/jrebel/remoteserver/docker.html

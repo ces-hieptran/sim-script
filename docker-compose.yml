@@ -19,14 +19,18 @@ services:
       context: ./liferay/build/docker
     environment:
       - LIFERAY_JAVA_OPTS=-Xms4g -Xmx4g
-      - LIFERAY_JPDA_ENABLED=true # Enable Debug remote property
+      - LIFERAY_JPDA_ENABLED=true
       - LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE=0.0.0.0:11311
+      - JAVA_OPTS=-agentpath:/lib/libjrebel64.so -javaagent:/xrebel.jar -Drebel.remoting_plugin=true -Drebel.log.file=/jrebel.log
     ports:
       - "127.0.0.1:11311:11311"
-      - "8000:8000" # Expose debug port
+      - "8000:8000"
     volumes:
-      - ./liferay/build/docker/deploy:/opt/liferay/deploy #Mount deploy folder
-      - ./liferay/build/docker/work:/opt/liferay/work #Mount Debug JSP path
+      - ./liferay/build/docker/deploy:/opt/liferay/deploy
+      - ./liferay/build/docker/work:/opt/liferay/work
+      - $SIM_SCRIPT/jrebel-jar/jrebel.jar:/jrebel.jar
+      - $SIM_SCRIPT/jrebel-jar/xrebel.jar:/xrebel.jar
+      - $SIM_SCRIPT/jrebel-jar/lib/libjrebel64.so:/lib/libjrebel64.so
       - type: volume
         source: liferay-data
         target: /opt/liferay/data 
