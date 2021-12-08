@@ -61,22 +61,59 @@ sim_file(){
 		fi
 }
 
-sim_clean(){
+sim_jrebel_file(){
+	if [ $(cat $workDir) ]
+		then
+		  	path=$(sim_get)
+		  	composeFile=docker-compose.yml
+		  
+		  	cp $current/docker-compose-with-jrebel.yml $(sim_get)/$composeFile
+		  	return 0;
+		else
+		  	echo "Please set Project or Worktree directory"
+			echo    - $SIM_WORKSPACE -
+			return 1;
+		fi
+}
+
+sim_clean_server(){
 	cd $(sim_get)
-	git restore docker-compose.yml
+	docker-compose down --rmi local;
+	return 0;
+}
+
+sim_clean_local(){
+	cd $(sim_get)
+	docker-compose down --rmi local -v;
+	return 0;
+}
+
+sim_clean_git(){
+	cd $(sim_get)
+	git restore docker-compose.yml;
+	rm liferay/configs/common/deploy/license.xml;
 	return 0;
 }
 
 
+stop(){
+	cd $(sim_get)
+	docker-compose stop;
+	return 0;
+}
+
 if [ -z $1 ]
 then
-    echo 'set		Set Project or Worktree folder'
-    echo 'get		Get current Project or Worktree folder working on'
-    echo 'key		Copy license.xml file to docker deploy folder'
-    echo 'file		Update docker-compose file to Debug and Deploy'
-    echo 'setup           Setup all think need for Development'
-    echo 'run      	Run all container in docker-compose'
-    echo 'clean           Clean docker-compose file'
+    echo '  set		    Set Project or Worktree folder'
+    echo '  get		    Get current Project or Worktree folder working on'
+    echo '  run      	    Run all container in docker-compose'
+    echo '  stop		    Stop server (not remove any thinks)'
+    echo '  key		    Copy license.xml file to docker deploy folder'
+    echo '  file  [jrebel]    Update docker-compose file to Debug and Deploy'
+    echo '  setup [jrebel]    Setup all think need for Development'
+    echo '  clean - server    Clean all just keep Database '
+    echo '        - all       Clean everythink (container && image && volume)'
+    echo '        - git       Clean docker-compose and license file'
     
 elif [ -n $1 ]
 then
@@ -89,16 +126,45 @@ then
     		sim_set;;
     	'key'| 3)
 		sim_key;;	
-    	'file'| 4)		
-		sim_file;;
-	'clean'| 5)	
-		sim_clean;;
+    	'file'| 4)	
+    		if [ -z $2 ]
+    		then 
+	    		sim_file;
+	    	elif [ $2 = 'jrebel' ]
+	    	then
+	    		sim_jrebel_file;
+	    	fi;;	
+		
+	'stop'| 5)	
+		stop;;
     	'setup' | 6)	
-    		currentWorkSpace=$(pwd)
-    		sim_set && cd $(sim_get) && sim_file && sim_key && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
-    		cd $(sim_get)
+    		if [ -z $2 ]
+    		then 
+	    		currentWorkSpace=$(pwd)
+	    		sim_set && cd $(sim_get) && sim_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
+	    		cd $(sim_get)
+	    	elif [ $2 = 'jrebel' ]
+	    	then
+	    		currentWorkSpace=$(pwd)
+	    		sim_set && cd $(sim_get) && sim_jrebel_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
+	    		cd $(sim_get)
+	    	fi;;
+    	'clean' | 7)	
+    		if [ -n $2 ]
+    		then
+    			case $2 in
+    			'all' )
+    				sim_clean_local;;
+    			'server')
+    				sim_clean_server;;
+    			'git')
+    				sim_clean_git;;
+    			*)
+    				echo This is not a options. Please try again.
+    			esac
+    		fi
     		;;
-    	'run' | 7)
+    	'run' | 8)
     		 (docker-compose start || docker-compose up -d) && docker-compose logs -f liferay;;
     	*)
     		echo This is not a options. Please try again.
