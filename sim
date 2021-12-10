@@ -46,6 +46,20 @@ sim_key(){
 		fi
 }
 
+sim_key_setup(){
+
+	if [ $(cat $workDir) ]
+		then
+			license=license.xml
+			cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
+			return 0;
+		else
+		        echo "Please set Project or Worktree directory"
+		        echo    - $SIM_WORKSPACE -
+		        return 1;
+		fi
+}
+
 sim_file(){
 	if [ $(cat $workDir) ]
 		then
@@ -91,7 +105,7 @@ sim_clean_local(){
 sim_clean_git(){
 	cd $(sim_get)
 	git restore docker-compose.yml;
-	rm liferay/configs/common/deploy/license.xml;
+	rm liferay/configs/common/osgi/marketplace/license.xml;
 	return 0;
 }
 
@@ -141,12 +155,12 @@ then
     		if [ -z $2 ]
     		then 
 	    		currentWorkSpace=$(pwd)
-	    		sim_set && cd $(sim_get) && sim_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
+	    		sim_set && cd $(sim_get) && sim_key_setup && sim_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
 	    		cd $(sim_get)
 	    	elif [ $2 = 'jrebel' ]
 	    	then
 	    		currentWorkSpace=$(pwd)
-	    		sim_set && cd $(sim_get) && sim_jrebel_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
+	    		sim_set && cd $(sim_get) && sim_key_setup && sim_jrebel_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
 	    		cd $(sim_get)
 	    	fi;;
     	'clean' | 7)	
