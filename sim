@@ -20,74 +20,78 @@ sim_get(){
 sim_set(){
 
 	if echo $(pwd) | grep -q $SIM_WORKSPACE;
-         	then
+ 	then
+ 		if [ $(cat $workDir) != $(echo $(pwd)) ]
+ 		then 
+ 			stop
   			echo $(pwd) > $workDir
 			echo $(pwd)
 			return 0;
-  		else
-  			echo    Wrong folder!
-    			echo    Please set Project or Worktree in SIM Workspace
-  			echo    - $SIM_WORKSPACE -
-  			return 1;
 		fi
+	else
+		echo    Wrong folder!
+		echo    Please set Project or Worktree in SIM Workspace
+		echo    - $SIM_WORKSPACE -
+		return 1;
+	fi
 }
 
 sim_key(){
 
 	if [ $(cat $workDir) ]
-		then
-			license=license.xml
-			cp $current/$license $(sim get)/liferay/build/docker/deploy/$license
-			return 0;
-		else
-		        echo "Please set Project or Worktree directory"
-		        echo    - $SIM_WORKSPACE -
-		        return 1;
-		fi
+	then
+		license=license.xml
+		cp $current/$license $(sim get)/liferay/build/docker/deploy/$license
+		return 0;
+	else
+	        echo "Please set Project or Worktree directory"
+	        echo    - $SIM_WORKSPACE -
+	        return 1;
+	fi
 }
 
 sim_key_setup(){
 
 	if [ $(cat $workDir) ]
-		then
-			license=license.xml
-			cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
-			return 0;
-		else
-		        echo "Please set Project or Worktree directory"
-		        echo    - $SIM_WORKSPACE -
-		        return 1;
-		fi
+	then
+		license=license.xml
+		cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
+		return 0;
+	else
+	        echo "Please set Project or Worktree directory"
+	        echo    - $SIM_WORKSPACE -
+	        return 1;
+	fi
 }
 
 sim_file(){
 	if [ $(cat $workDir) ]
-		then
-		  	path=$(sim_get)
-		  	composeFile=docker-compose.yml
-		  
-		  	cp $current/$composeFile $(sim_get)/$composeFile
-		  	return 0;
-		else
-		  	echo "Please set Project or Worktree directory"
-			echo    - $SIM_WORKSPACE -
-			return 1;
-		fi
+	then
+	  	path=$(sim_get)
+	  	composeFile=docker-compose.yml
+	  
+	  	cp $current/$composeFile $(sim_get)/$composeFile
+	  	return 0;
+	else
+	  	echo "Please set Project or Worktree directory"
+		echo    - $SIM_WORKSPACE -
+		return 1;
+	fi
 }
 
 sim_jrebel_file(){
 	if [ $(cat $workDir) ]
-		then
-		  	path=$(sim_get)
-		  	composeFile=docker-compose.yml
-		  
-		  	cp $current/docker-compose-with-jrebel.yml $(sim_get)/$composeFile
-		  	return 0;
-		else
-		  	echo "Please set Project or Worktree directory"
-			echo    - $SIM_WORKSPACE -
-			return 1;
-		fi
+	then
+	  	path=$(sim_get)
+	  	composeFile=docker-compose.yml
+	  
+	  	cp $current/docker-compose-with-jrebel.yml $(sim_get)/$composeFile
+	  	return 0;
+	else
+	  	echo "Please set Project or Worktree directory"
+		echo    - $SIM_WORKSPACE -
+		return 1;
+	fi
 }
 
 sim_clean_server(){
