@@ -45,7 +45,8 @@ services:
     ports:
       - "127.0.0.1:9200:9200"
   webserver:
-    image: "liferaycloud/nginx:1.16.1-4.1.1"
+    build:
+      context: ./webserver
     environment:
       - LCP_PROJECT_ENVIRONMENT=local
     ports:

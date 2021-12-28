@@ -21,12 +21,15 @@ sim_set(){
 
 	if echo $(pwd) | grep -q $SIM_WORKSPACE;
  	then
- 		if [ $(cat $workDir) != $(echo $(pwd)) ]
+ 		if [ "$(cat $workDir)" != "$(pwd)" ]
  		then 
- 			stop
-  			echo $(pwd) > $workDir
-			echo $(pwd)
+ 			temp=$(pwd);
+ 			stop;
+  			echo $temp > $workDir;
+			echo $temp;
 			return 0;
+		else
+			sim_get;
 		fi
 	else
 		echo    Wrong folder!
@@ -69,8 +72,12 @@ sim_file(){
 	then
 	  	path=$(sim_get)
 	  	composeFile=docker-compose.yml
-	  
+	  	nginx=nginx.conf
+	  	license=license.xml
+	  	
 	  	cp $current/$composeFile $(sim_get)/$composeFile
+	  	cp $current/$nginx $(sim_get)/webserver/configs/local/$nginx
+	  	cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
 	  	return 0;
 	else
 	  	echo "Please set Project or Worktree directory"
@@ -110,6 +117,7 @@ sim_clean_git(){
 	cd $(sim_get)
 	git restore docker-compose.yml;
 	rm liferay/configs/common/osgi/marketplace/license.xml;
+	rm webserver/configs/local/nginx.conf;
 	return 0;
 }
 
