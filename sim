@@ -115,9 +115,8 @@ sim_clean_local(){
 
 sim_clean_git(){
 	cd $(sim_get)
-	git restore docker-compose.yml;
-	rm liferay/configs/common/osgi/marketplace/license.xml;
-	rm webserver/configs/local/nginx.conf;
+	git restore docker-compose.yml liferay/gradle.properties;
+	rm liferay/configs/common/osgi/marketplace/license.xml webserver/configs/local/nginx.conf */java_pid*.hprof;
 	return 0;
 }
 
@@ -191,7 +190,7 @@ then
     		fi
     		;;
     	'run' | 8)
-    		 (docker-compose start || docker-compose up -d) && docker-compose logs -f liferay;;
+    		 cd $(sim_get) && sim file && (docker-compose start || docker-compose up -d) && docker-compose logs -f liferay;;
     	*)
     		echo This is not a options. Please try again.
     esac
