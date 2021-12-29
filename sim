@@ -74,10 +74,12 @@ sim_file(){
 	  	composeFile=docker-compose.yml
 	  	nginx=nginx.conf
 	  	license=license.xml
+	  	gradle=gradle.properties
 	  	
 	  	cp $current/$composeFile $(sim_get)/$composeFile
 	  	cp $current/$nginx $(sim_get)/webserver/configs/local/$nginx
 	  	cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
+	  	cp $currnet/$gradle $(sim get)/liferay/$gradle
 	  	return 0;
 	else
 	  	echo "Please set Project or Worktree directory"
