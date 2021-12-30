@@ -6,6 +6,8 @@
 
 current=$(dirname $0)
 workDir=$current/work-dir.txt
+defaultComposeFile=docker-compose.yml
+jrebelComposeFile=docker-compose-with-jrebel.yml
 
 sim_get(){
 	if [ $(cat $workDir) ]
@@ -71,15 +73,15 @@ sim_file(){
 	if [ $(cat $workDir) ]
 	then
 	  	path=$(sim_get)
-	  	composeFile=docker-compose.yml
+	  	composeFile=$1
 	  	nginx=nginx.conf
 	  	license=license.xml
 	  	gradle=gradle.properties
 	  	
-	  	cp $current/$composeFile $(sim_get)/$composeFile
+	  	cp $current/$composeFile $(sim_get)/$defaultComposeFile
 	  	cp $current/$nginx $(sim_get)/webserver/configs/local/$nginx
 	  	cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
-	  	cp $currnet/$gradle $(sim get)/liferay/$gradle
+	  	cp $current/$gradle $(sim get)/liferay/$gradle
 	  	return 0;
 	else
 	  	echo "Please set Project or Worktree directory"
@@ -88,19 +90,16 @@ sim_file(){
 	fi
 }
 
-sim_jrebel_file(){
-	if [ $(cat $workDir) ]
+sim_setup(){
+	currentWorkSpace=$(pwd)
+	
+	sim_set && cd $(sim_get) && sim_key_setup && sim_file $1
+	
+	if [ ! -d "$(sim_get)/liferay/build/docker" ]
 	then
-	  	path=$(sim_get)
-	  	composeFile=docker-compose.yml
-	  
-	  	cp $current/docker-compose-with-jrebel.yml $(sim_get)/$composeFile
-	  	return 0;
-	else
-	  	echo "Please set Project or Worktree directory"
-		echo    - $SIM_WORKSPACE -
-		return 1;
+		cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info			
 	fi
+	cd $(sim_get)	
 }
 
 sim_clean_server(){
@@ -118,7 +117,7 @@ sim_clean_local(){
 sim_clean_git(){
 	cd $(sim_get)
 	git restore docker-compose.yml liferay/gradle.properties;
-	rm liferay/configs/common/osgi/marketplace/license.xml webserver/configs/local/nginx.conf */java_pid*.hprof;
+	rm liferay/configs/common/osgi/marketplace/license.xml webserver/configs/local/nginx.conf liferay/modules/java_pid*.hprof;
 	return 0;
 }
 
@@ -167,14 +166,10 @@ then
     	'setup' | 6)	
     		if [ -z $2 ]
     		then 
-	    		currentWorkSpace=$(pwd)
-	    		sim_set && cd $(sim_get) && sim_key_setup && sim_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
-	    		cd $(sim_get)
+    			sim_setup $defaultComposeFile;
 	    	elif [ $2 = 'jrebel' ]
 	    	then
-	    		currentWorkSpace=$(pwd)
-	    		sim_set && cd $(sim_get) && sim_key_setup && sim_jrebel_file && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
-	    		cd $(sim_get)
+	    		sim_setup $jrebelComposeFile;
 	    	fi;;
     	'clean' | 7)	
     		if [ -n $2 ]
