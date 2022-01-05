@@ -8,6 +8,7 @@ current=$(dirname $0)
 workDir=$current/work-dir.txt
 defaultComposeFile=docker-compose.yml
 jrebelComposeFile=docker-compose-with-jrebel.yml
+composeWithData=docker-compose-with-data.yml
 
 sim_get(){
 	if [ $(cat $workDir) ]
@@ -82,6 +83,7 @@ sim_file(){
 	  	cp $current/$nginx $(sim_get)/webserver/configs/local/$nginx
 	  	cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
 	  	cp $current/$gradle $(sim get)/liferay/$gradle
+	  	
 	  	return 0;
 	else
 	  	echo "Please set Project or Worktree directory"
@@ -93,12 +95,12 @@ sim_file(){
 sim_setup(){
 	currentWorkSpace=$(pwd)
 	
-	sim_set && cd $(sim_get) && sim_key_setup && sim_file $1
+	sim_set && cd $(sim_get) && sim_file $1 && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
 	
-	if [ ! -d "$(sim_get)/liferay/build/docker" ]
-	then
-		cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info			
-	fi
+	if [ $1 = $composeWithData ]
+  	then
+  		cp $current/Dockerfile $(sim get)/liferay/build/docker/Dockerfile
+  	fi
 	cd $(sim_get)	
 }
 
@@ -170,6 +172,9 @@ then
 	    	elif [ $2 = 'jrebel' ]
 	    	then
 	    		sim_setup $jrebelComposeFile;
+    		elif [ $2 = 'with-data' ]
+	    	then
+	    		sim_setup $composeWithData;
 	    	fi;;
     	'clean' | 7)	
     		if [ -n $2 ]
