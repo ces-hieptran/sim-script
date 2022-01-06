@@ -137,8 +137,8 @@ then
     echo '  run      	    Run all container in docker-compose'
     echo '  stop		    Stop server (not remove any thinks)'
     echo '  key		    Copy license.xml file to docker deploy folder'
-    echo '  file  [jrebel]    Update docker-compose file to Debug and Deploy'
     echo '  setup [jrebel]    Setup all think need for Development'
+    echo '        [with-data]    Setup all think need for Development with dummy data and portlet'
     echo '  clean - server    Clean all just keep Database '
     echo '        - all       Clean everythink (container && image && volume)'
     echo '        - git       Clean docker-compose and license file'
@@ -154,15 +154,6 @@ then
     		sim_set;;
     	'key'| 3)
 		sim_key;;	
-    	'file'| 4)	
-    		if [ -z $2 ]
-    		then 
-	    		sim_file;
-	    	elif [ $2 = 'jrebel' ]
-	    	then
-	    		sim_jrebel_file;
-	    	fi;;	
-		
 	'stop'| 5)	
 		stop;;
     	'setup' | 6)	
