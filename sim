@@ -185,7 +185,7 @@ then
     		fi
     		;;
     	'run' | 8)
-    		 cd $(sim_get) && sim file && (docker-compose start || docker-compose up -d) && docker-compose logs -f liferay;;
+    		 cd $(sim_get) && (docker-compose start || docker-compose up -d) && docker-compose logs -f liferay;;
     	*)
     		echo This is not a options. Please try again.
     esac
