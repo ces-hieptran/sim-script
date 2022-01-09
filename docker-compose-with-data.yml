@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   database:
-    image: "vanhiep99w/sim_database"
+    image: "simces/service:database"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=lportal
@@ -15,7 +15,7 @@ services:
         source: database-data
         target: /var/lib/mysql
   liferay:
-    image: "vanhiep99w/sim_liferay"
+    image: "simces/service:liferay"
     environment:
       - LIFERAY_JAVA_OPTS=-Xms4g -Xmx4g
       - LIFERAY_JPDA_ENABLED=true # Enable Debug remote property
@@ -33,7 +33,7 @@ services:
       - database
       - search
   search:
-    image: "vanhiep99w/sim_search"
+    image: "simces/service:search"
     environment:
       - LCP_PROJECT_ENVIRONMENT=local
       - LCP_SERVICE_SCALE=1
@@ -44,7 +44,8 @@ services:
     ports:
       - "127.0.0.1:9200:9200"
   webserver:
-    image: "vanhiep99w/sim_webserver"
+    build:
+      context: ./webserver
     environment:
       - LCP_PROJECT_ENVIRONMENT=local
     ports:
