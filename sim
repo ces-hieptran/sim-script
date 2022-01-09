@@ -79,6 +79,7 @@ sim_file(){
 	  	license=license.xml
 	  	gradle=gradle.properties
 	  	
+	  	
 	  	cp $current/$composeFile $(sim_get)/$defaultComposeFile
 	  	cp $current/$nginx $(sim_get)/webserver/configs/local/$nginx
 	  	cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
@@ -94,8 +95,9 @@ sim_file(){
 
 sim_setup(){
 	currentWorkSpace=$(pwd)
+
+	sim_set && cd $(sim_get) && sim_file $1 && cd $currentWorkSpace/liferay && ./gradlew createDockerfile;
 	
-	sim_set && cd $(sim_get) && sim_file $1 && cd $currentWorkSpace/liferay && ./gradlew clean createDockerfile --info
 	
 	if [ $1 = $composeWithData ]
   	then
