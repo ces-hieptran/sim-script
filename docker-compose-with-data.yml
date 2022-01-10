@@ -15,7 +15,8 @@ services:
         source: database-data
         target: /var/lib/mysql
   liferay:
-    image: "simces/service:liferay"
+    build:
+      context: ./liferay/build/docker
     environment:
       - LIFERAY_JAVA_OPTS=-Xms4g -Xmx4g
       - LIFERAY_JPDA_ENABLED=true # Enable Debug remote property

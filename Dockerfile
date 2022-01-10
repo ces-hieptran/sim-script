@@ -1,4 +1,4 @@
-FROM vanhiep99w/sim_liferay
+FROM simces/service:liferay
 ENV LIFERAY_WORKSPACE_ENVIRONMENT=local
 COPY --chown=liferay:liferay deploy /mnt/liferay/deploy
 COPY --chown=liferay:liferay patching /mnt/liferay/patching
