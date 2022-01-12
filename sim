@@ -7,8 +7,11 @@
 current=$(dirname $0)
 workDir=$current/work-dir.txt
 defaultComposeFile=docker-compose.yml
-jrebelComposeFile=docker-compose-with-jrebel.yml
-composeWithData=docker-compose-with-data.yml
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
 
 sim_get(){
 	if [ $(cat $workDir) ]
@@ -74,13 +77,13 @@ sim_file(){
 	if [ $(cat $workDir) ]
 	then
 	  	path=$(sim_get)
-	  	composeFile=$1
+	  	composeFile="$1".yml
 	  	nginx=nginx.conf
 	  	license=license.xml
 	  	gradle=gradle.properties
 	  	
 	  	
-	  	cp $current/$composeFile $(sim_get)/$defaultComposeFile
+	  	cp $current/docker-compose/$composeFile $(sim_get)/$defaultComposeFile
 	  	cp $current/$nginx $(sim_get)/webserver/configs/local/$nginx
 	  	cp $current/$license $(sim get)/liferay/configs/common/osgi/marketplace/$license
 	  	cp $current/$gradle $(sim get)/liferay/$gradle
@@ -99,7 +102,7 @@ sim_setup(){
 	sim_set && cd $(sim_get) && sim_file $1 && cd $currentWorkSpace/liferay && ./gradlew createDockerfile;
 	
 	
-	if [ $1 = $composeWithData ]
+	if [ $1 = 'with-data' ]
   	then
   		cp $current/Dockerfile $(sim get)/liferay/build/docker/Dockerfile
   	fi
@@ -139,8 +142,8 @@ then
     echo '  run      	    Run all container in docker-compose'
     echo '  stop		    Stop server (not remove any thinks)'
     echo '  key		    Copy license.xml file to docker deploy folder'
-    echo '  setup [jrebel]    Setup all think need for Development'
-    echo '        [with-data]    Setup all think need for Development with dummy data and portlet'
+    echo '  setup   	    Setup all think need for Development'   
+    echo "  		    Can add some subfix ${GREEN}|$(find $current/docker-compose -iname "*.yml" -exec basename {} .yml ';' | tr '\n' '|')${NC}"         
     echo '  clean - server    Clean all just keep Database '
     echo '        - all       Clean everythink (container && image && volume)'
     echo '        - git       Clean docker-compose and license file'
@@ -161,13 +164,9 @@ then
     	'setup' | 6)	
     		if [ -z $2 ]
     		then 
-    			sim_setup $defaultComposeFile;
-	    	elif [ $2 = 'jrebel' ]
-	    	then
-	    		sim_setup $jrebelComposeFile;
-    		elif [ $2 = 'with-data' ]
-	    	then
-	    		sim_setup $composeWithData;
+    			sim_setup docker-compose;
+	    	else
+	    		sim_setup $2;
 	    	fi;;
     	'clean' | 7)	
     		if [ -n $2 ]
